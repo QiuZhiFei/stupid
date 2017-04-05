@@ -28,18 +28,25 @@ let ds = conf.provider[source];
 let results = [];
 let finishedHandler = null;
 
+const MSG = {
+    INPUT_ERROR      : '输入错误，当前只支持通过证券代码查询，请检查后重新输入！',
+    TOO_MANY_SYMS    : '查询的股票太多，一次最多支持查询25只股票！',
+    SYMBOL_NOT_EXIST : '该股票代码不存在:',
+};
+
 function loadData(syms) {
-	let query = _.map(syms, x => conf.market[x.substr(0, 3)] + x).join(',');
+	let sockIDs = getValidSockIDs(syms);
+	let query = _.map(sockIDs, x => conf.market[x.substr(0, 3)] + x).join(',');
 	return request.getAsync(ds.url + query, {
 		encoding: null
 	}).spread((resp, body) => {
 		body = iconv.convert(body).toString();
 		vm.runInThisContext(body);
 
-		_.each(syms, s => {
+		_.each(sockIDs, s => {
 			let localVar = ds.flag + conf.market[s.substr(0, 3)] + s;
 			if (body.indexOf(localVar) < 0 || body.indexOf(`${localVar}="";`) >= 0) {
-				console.error(MSG.SYMBOL_NOT_EXIST.error, s.em);
+				console.error(MSG.SYMBOL_NOT_EXIST, s);
 				return false;
 			}
 			let splits = vm.runInThisContext(ds.flag + conf.market[s.substr(0, 3)] + s).split(ds.sep);
@@ -75,10 +82,14 @@ function loadData(syms) {
 	});
 };
 
-function finished() {
+function getValidSockIDs(stockIDs) {
+	return  stockIDs.split(',');
+};
+
+function finished(value) {
 	finishedHandler(results);
 	results = [];
-}
+};
 
 let Stupid_Request = function() {
 	this.get = function(stocks, handler) {
