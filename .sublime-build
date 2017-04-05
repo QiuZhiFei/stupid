@@ -1,0 +1,4 @@
+{
+  "shell_cmdb": ["/usr/local/bin/node", "$file"],
+  "selector": "source.js"
+}

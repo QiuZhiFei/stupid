@@ -1,0 +1,17 @@
+{
+  "name": "stupid",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "colors": "^1.1.2",
+    "columnify": "^1.5.4",
+    "commander": "^2.9.0",
+    "iconv": "^2.2.1",
+    "lodash": "^4.17.4",
+    "node-osascript": "^2.0.0",
+    "request": "^2.81.0",
+    "vm": "^0.1.0"
+  }
+}
